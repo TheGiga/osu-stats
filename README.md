@@ -18,4 +18,6 @@ To make the bot work:
 
 Bot uses Slash Commands (`applications.commands` scope)
 
+[osu!stats legacy](https://github.com/TheGiga/osu-stats-legacy) (uses default message commands, will not recieve updates)
+
 [Add existing copy of the bot by this link](https://discord.com/api/oauth2/authorize?client_id=804834494486020106&permissions=105227078720&scope=bot%20applications.commands)
