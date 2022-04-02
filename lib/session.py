@@ -20,31 +20,26 @@ class Api:
 
         :rtype: osu.User
         """
+
+        modes = {
+            "osu!": 0,
+            "Taiko": 1,
+            "CtB": 2,
+            "osu!mania": 3
+        }
+
         params = {
             'k': self._api_key,
             'u': name,
-            'm': mode,
+            'm': modes[mode],
             'type': 'string'
         }
         data = await get(f'{self._api_endpoint}/get_user', params=params)
 
         try:
             obj = User(
-                user_id=data[0].get('user_id'),
-                username=data[0].get('username'),
-                count_300=data[0].get('count300'),
-                play_count=data[0].get('playcount'),
-                rank=data[0].get('pp_rank'),
-                country_rank=data[0].get('pp_country_rank'),
-                level=data[0].get('level'),
-                pp=data[0].get('pp_raw'),
-                total_ss=data[0].get('count_rank_ss'),
-                total_ssh=data[0].get('count_rank_ssh'),
-                total_s=data[0].get('count_rank_s'),
-                total_sh=data[0].get('count_rank_sh'),
-                country=data[0].get('country'),
-                accuracy=data[0].get('accuracy'),
-                profile_image_url=f'http://s.ppy.sh/a/{data[0].get("user_id")}'
+                user_id=int(data[0].get('user_id')),
+                data=data[0]
             )
         except IndexError:
             raise UserNotFound

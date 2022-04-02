@@ -7,6 +7,7 @@ Glory to Ukraine.
 import os
 
 import discord
+from discord import Option, SlashCommandOptionType
 from dotenv import load_dotenv
 
 from lib import OsuBot, Api, UserNotFound
@@ -23,13 +24,36 @@ async def on_ready():
     print("Bot is running...")
 
 
-@bot_instance.slash_command(name='player')
+@bot_instance.slash_command(name='information', description='Information about osu!stats bot.')
+async def info_command(
+        ctx: discord.ApplicationContext
+):
+    embed = discord.Embed(
+        title='osu!stats', colour=discord.Colour.magenta(), timestamp=discord.utils.utcnow(),
+        description="""
+            **osu!stats** is an open source project made by `gigalegit-#0880`.
+            
+            [Click here for source code](https://github.com/TheGiga/osu-stats)
+        """
+    )
+
+    embed.set_footer(text=f'{len(bot_instance.guilds)} guilds.')
+
+    await ctx.respond(embed=embed)
+
+
+@bot_instance.slash_command(name='player', description='Check player statistics.')
 async def osu_player(
         ctx: discord.ApplicationContext,
-        name: str
+        name: str,
+        mode: Option(
+                        SlashCommandOptionType.string,
+                        description="osu! game type.",
+                        choices=["osu!", "osu!mania", "Taiko", "CtB"]
+                    )
 ):
     try:
-        player = await API.get_osu_player(name=name)
+        player = await API.get_osu_player(name=name, mode=mode)
     except UserNotFound:
         return await ctx.respond(
             embed=discord.Embed(title="User not found!", colour=discord.Colour.red()),
