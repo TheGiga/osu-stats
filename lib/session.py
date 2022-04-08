@@ -1,5 +1,5 @@
 from .errors import UserNotFound
-from .osu import get, User
+from .osu import get_data, User
 
 
 class Api:
@@ -34,11 +34,11 @@ class Api:
             'm': modes[mode],
             'type': 'string'
         }
-        data = await get(f'{self._api_endpoint}/get_user', params=params)
+        data = await get_data(f'{self._api_endpoint}/get_user', params=params)
 
         try:
             obj = User(
-                user_id=int(data[0].get('user_id')),
+                user_id=int(data[0].get_data('user_id')),
                 data=data[0]
             )
         except IndexError:

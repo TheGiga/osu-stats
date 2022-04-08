@@ -1,2 +1,2 @@
-from .requests import get
+from .requests import get_data
 from .user import User
