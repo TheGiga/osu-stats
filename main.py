@@ -1,4 +1,3 @@
-
 """
 By gigabit- AKA https://github.com/TheGiga 24.03.2022
 Glory to Ukraine.
@@ -10,7 +9,7 @@ import discord
 from discord import Option, SlashCommandOptionType
 from dotenv import load_dotenv
 
-from lib import OsuBot, Api, UserNotFound
+from lib import OsuBot, Api, UserNotFound, RANKING_EMOJIS, UserScoreNotFound
 
 load_dotenv()
 intents = discord.Intents.default()
@@ -47,10 +46,10 @@ async def osu_player(
         ctx: discord.ApplicationContext,
         name: str,
         mode: Option(
-                        SlashCommandOptionType.string,
-                        description="osu! game type.",
-                        choices=["osu!", "osu!mania", "Taiko", "CtB"]
-                    )
+            SlashCommandOptionType.string,
+            description="osu! game type.",
+            choices=["osu!", "osu!mania", "Taiko", "CtB"]
+        )
 ):
     try:
         player = await API.get_osu_player(name=name, mode=mode)
@@ -60,11 +59,20 @@ async def osu_player(
             ephemeral=True
         )
 
+    try:
+        best_score = await player.best_score
+        best_score_map = await best_score.map
+    except UserScoreNotFound:
+        return await ctx.respond(
+            embed=discord.Embed(title="User has no stats in this game mode!", colour=discord.Colour.red()),
+            ephemeral=True
+        )
+
     embed = discord.Embed(
         title=f'{player.username} - Lvl. {player.level}',
         timestamp=discord.utils.utcnow(),
         description=f"""
-            Showing only __RANKED__ statistics.
+            Showing only __RANKED__ statistics in __{player.game_mode}__ game mode.
             
             **PP:** **`{player.pp}`**
             **Rank:** `{player.rank}` | `{player.country_rank}` :flag_{player.country.lower()}:
@@ -75,6 +83,11 @@ async def osu_player(
             
             Player country is **{player.country}** :flag_{player.country.lower()}:
             
+            **BEST SCORE**:
+            ｜ {RANKING_EMOJIS.get(best_score.rank)} - **{best_score_map.title}**
+            ｜ With **{best_score.misses}**:x:
+            ｜ `PP:` **{best_score.pp}**
+            
             [Go to website profile](https://osu.ppy.sh/users/{player.user_id})
         """,
         colour=discord.Colour.purple()
@@ -84,6 +97,7 @@ async def osu_player(
     embed.set_footer(text=f'ID: {player.user_id}')
 
     await ctx.respond(embed=embed)
+
 
 if __name__ == "__main__":
     bot_instance.run(os.getenv("TOKEN"))
