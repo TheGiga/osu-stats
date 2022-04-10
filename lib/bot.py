@@ -1,9 +1,9 @@
 from abc import ABC
 
-import discord
+from discord.ext import bridge
 
 
-class OsuBot(discord.Bot, ABC):
+class OsuBot(bridge.Bot, ABC):
 
     """
         Here we can put custom bot methods and properties.

@@ -14,7 +14,7 @@ from lib import OsuBot, Api, UserNotFound, RANKING_EMOJIS, UserScoreNotFound
 load_dotenv()
 intents = discord.Intents.default()
 
-bot_instance = OsuBot(intents=intents)
+bot_instance = OsuBot(intents=intents, help_command=None)
 API = Api(api_key=os.getenv("API_KEY"))
 
 
@@ -23,14 +23,17 @@ async def on_ready():
     print("Bot is running...")
 
 
-@bot_instance.slash_command(name='information', description='Information about osu!stats bot.')
+@bot_instance.bridge_command(name='information', description='Information about osu!stats bot.', aliases=['help'])
 async def info_command(
-        ctx: discord.ApplicationContext
+        ctx
 ):
     embed = discord.Embed(
         title='osu!stats', colour=discord.Colour.magenta(), timestamp=discord.utils.utcnow(),
         description="""
             **osu!stats** is an open source project made by `gigalegit-#0880`.
+            
+            Use `/player <name>` or to check player statistics.
+            - *`/player` is a slash command!*
             
             [Click here for source code](https://github.com/TheGiga/osu-stats)
         """
@@ -43,13 +46,13 @@ async def info_command(
 
 @bot_instance.slash_command(name='player', description='Check player statistics.')
 async def osu_player(
-        ctx: discord.ApplicationContext,
+        ctx,
         name: str,
         mode: Option(
             SlashCommandOptionType.string,
             description="osu! game type.",
             choices=["osu!", "osu!mania", "Taiko", "CtB"]
-        )
+        ) = "osu!"
 ):
     try:
         player = await API.get_osu_player(name=name, mode=mode)
