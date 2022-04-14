@@ -2,7 +2,6 @@
 By gigabit- AKA https://github.com/TheGiga 24.03.2022
 Glory to Ukraine.
 """
-
 import os
 
 import discord
@@ -10,6 +9,7 @@ from discord import Option, SlashCommandOptionType
 from dotenv import load_dotenv
 
 from lib import OsuBot, Api, UserNotFound, RANKING_EMOJIS, UserScoreNotFound
+from lib.errors import BeatmapNotFound
 
 load_dotenv()
 intents = discord.Intents.default()
@@ -56,18 +56,21 @@ async def osu_player(
 ):
     try:
         player = await API.get_osu_player(name=name, mode=mode)
+        best_score = await player.best_score
+        best_score_map = await best_score.map
     except UserNotFound:
         return await ctx.respond(
             embed=discord.Embed(title="User not found!", colour=discord.Colour.red()),
             ephemeral=True
         )
-
-    try:
-        best_score = await player.best_score
-        best_score_map = await best_score.map
     except UserScoreNotFound:
         return await ctx.respond(
             embed=discord.Embed(title="User has no stats in this game mode!", colour=discord.Colour.red()),
+            ephemeral=True
+        )
+    except BeatmapNotFound:
+        return await ctx.respond(
+            embed=discord.Embed(title="Beatmap to display user scores not found!", colour=discord.Colour.red()),
             ephemeral=True
         )
 

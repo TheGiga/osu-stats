@@ -161,7 +161,7 @@ class User:
         try:
             obj = cls(
                 data=data[0],
-                game_mode=str(modes.get(mode)),
+                game_mode=mode,
                 api_key=api_key
             )
         except IndexError:
