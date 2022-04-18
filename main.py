@@ -89,6 +89,8 @@ async def osu_player(
             
             Player country is **{player.country}** :flag_{player.country.lower()}:
             
+            Total played time: **{player.total_time}**
+            
             **BEST SCORE**:
             ｜ {RANKING_EMOJIS.get(best_score.rank)} - **{best_score_map.title}**
             ｜ With **{best_score.misses}**:x:

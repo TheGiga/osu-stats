@@ -1,3 +1,5 @@
+import datetime
+
 from lib import UserNotFound
 from lib.osu import get_data
 from .user_score import UserBestScore
@@ -113,6 +115,15 @@ class User:
             x = int(self._data.get('count_rank_s')) + int(self._data.get('count_rank_sh'))
         except TypeError:
             x = 0
+
+        return x
+
+    @property
+    def total_time(self) -> str:
+        try:
+            x = str(datetime.timedelta(seconds=int(self._data.get('total_seconds_played'))))
+        except TypeError:
+            x = "Not found"
 
         return x
 
