@@ -128,5 +128,4 @@ class UserBestScore:
         except IndexError:
             raise UserScoreNotFound
 
-
         return obj
